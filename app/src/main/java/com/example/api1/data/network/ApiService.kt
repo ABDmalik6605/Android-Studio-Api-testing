@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface ApiService {
     @GET("airports")
-    fun getStudents(): Call<List<Airports>>
+    fun getAirports(): Call<List<Airports>>
 
     // ALL METHOD SHOULD BE MENTIONED HERE
     // PUT
