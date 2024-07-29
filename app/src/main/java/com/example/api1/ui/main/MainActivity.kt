@@ -15,7 +15,9 @@ import com.example.api1.R
 import com.example.api1.adapter.ItemRecyclerViewAdapter
 import com.example.api1.data.model.Airports
 import com.example.api1.data.model.ItemModel
+import com.example.api1.data.preferences.PreferenceManager
 import com.example.api1.repository.AirportRepository
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity() {
     private val itemList = ArrayList<ItemModel>()
@@ -24,9 +26,9 @@ class MainActivity : AppCompatActivity() {
     private val airportRepository = AirportRepository()
     private lateinit var endTextView: TextView
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PreferenceManager.init(this) // Initialize here
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         initUI()
-        fetchAirports()
+        fetchAirportsFromPreferences()
     }
 
     private fun initUI() {
@@ -44,16 +46,25 @@ class MainActivity : AppCompatActivity() {
         itemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1)) {
-                    endTextView.visibility = View.VISIBLE
-                } else {
-                    endTextView.visibility = View.GONE
-                }
+                endTextView.visibility = if (!recyclerView.canScrollVertically(1)) View.VISIBLE else View.GONE
             }
         })
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerViewAdapter = ItemRecyclerViewAdapter(itemList, this)
         itemRecyclerView.adapter = itemRecyclerViewAdapter
+    }
+
+    private fun fetchAirportsFromPreferences() {
+        val savedAirportsJson = PreferenceManager.get("airports", "")
+        if (!savedAirportsJson.isNullOrEmpty()) {
+            val airports: List<Airports> = deserializeAirports(savedAirportsJson)
+            airports.forEach { airport ->
+                itemList.add(ItemModel(airport.name, airport))
+            }
+            itemRecyclerViewAdapter.notifyDataSetChanged()
+        } else {
+            fetchAirports()
+        }
     }
 
     private fun fetchAirports() {
@@ -65,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                         itemList.add(ItemModel(airport.name, airport))
                     }
                     itemRecyclerViewAdapter.notifyDataSetChanged()
+                    saveAirportsToPreferences(airports)
                 }
             },
             onError = { error ->
@@ -73,11 +85,23 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun saveAirportsToPreferences(airports: List<Airports>) {
+        val airportsJson = serializeAirports(airports)
+        PreferenceManager.save("airports", airportsJson)
+    }
+
+    private fun serializeAirports(airports: List<Airports>?): String {
+        return PreferenceManager.gson.toJson(airports)
+    }
+
+    private fun deserializeAirports(data: String): List<Airports> {
+        return PreferenceManager.gson.fromJson(data, object : TypeToken<List<Airports>>() {}.type)
+    }
+
     fun onItemClick(airport: Airports) {
         val intent = Intent(this, AirportDetail::class.java).apply {
             putExtra("airport", airport)
         }
         startActivity(intent)
     }
-
 }
