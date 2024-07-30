@@ -6,38 +6,55 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.api1.R
 import com.example.api1.adapter.ItemRecyclerViewAdapter
 import com.example.api1.data.model.Airports
 import com.example.api1.data.model.ItemModel
-import com.example.api1.data.preferences.PreferenceManager
-import com.example.api1.repository.AirportRepository
-import com.google.gson.reflect.TypeToken
+import com.example.api1.viewmodel.AirportViewModel
 
 class MainActivity : AppCompatActivity() {
     private val itemList = ArrayList<ItemModel>()
     private lateinit var itemRecyclerViewAdapter: ItemRecyclerViewAdapter
     private lateinit var itemRecyclerView: RecyclerView
-    private val airportRepository = AirportRepository()
+    private val airportViewModel: AirportViewModel by viewModels()
     private lateinit var endTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PreferenceManager.init(this) // Initialize here
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
         initUI()
-        fetchAirportsFromPreferences()
+        observeAirports()
+    }
+
+    private fun observeAirports() {
+        airportViewModel.airports.observe(this, Observer { airports ->
+            Log.d("MainActivity", "Observing airports: $airports") // Log to check data
+            airports?.let {
+                itemList.clear()
+                it.forEach { airport ->
+                    Log.d("MainActivity", "Adding airport: ${airport.name}") // Log each item
+                    itemList.add(ItemModel(airport.name, airport))
+                }
+                itemRecyclerViewAdapter.notifyDataSetChanged()
+            }
+        })
+
+        airportViewModel.error.observe(this, Observer { error ->
+            Log.e("MainActivity", "Error: $error") // Log errors
+        })
     }
 
     private fun initUI() {
@@ -52,50 +69,6 @@ class MainActivity : AppCompatActivity() {
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerViewAdapter = ItemRecyclerViewAdapter(itemList, this)
         itemRecyclerView.adapter = itemRecyclerViewAdapter
-    }
-
-    private fun fetchAirportsFromPreferences() {
-        val savedAirportsJson = PreferenceManager.get("airports", "")
-        if (!savedAirportsJson.isNullOrEmpty()) {
-            val airports: List<Airports> = deserializeAirports(savedAirportsJson)
-            airports.forEach { airport ->
-                itemList.add(ItemModel(airport.name, airport))
-            }
-            itemRecyclerViewAdapter.notifyDataSetChanged()
-        } else {
-            fetchAirports()
-        }
-    }
-
-    private fun fetchAirports() {
-        airportRepository.getAirports(
-            onResult = { airports ->
-                airports?.let {
-                    itemList.clear()
-                    it.forEach { airport ->
-                        itemList.add(ItemModel(airport.name, airport))
-                    }
-                    itemRecyclerViewAdapter.notifyDataSetChanged()
-                    saveAirportsToPreferences(airports)
-                }
-            },
-            onError = { error ->
-                Log.e("MainActivity", "Error: ${error.message}")
-            }
-        )
-    }
-
-    private fun saveAirportsToPreferences(airports: List<Airports>) {
-        val airportsJson = serializeAirports(airports)
-        PreferenceManager.save("airports", airportsJson)
-    }
-
-    private fun serializeAirports(airports: List<Airports>?): String {
-        return PreferenceManager.gson.toJson(airports)
-    }
-
-    private fun deserializeAirports(data: String): List<Airports> {
-        return PreferenceManager.gson.fromJson(data, object : TypeToken<List<Airports>>() {}.type)
     }
 
     fun onItemClick(airport: Airports) {

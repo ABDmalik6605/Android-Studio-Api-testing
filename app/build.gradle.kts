@@ -46,9 +46,21 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    //implementation (libs.retrofit)
-    //implementation (libs.converter.gson)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
 
+    // DataStore
+    implementation(libs.androidxDatastore)
+    implementation(libs.androidxDatastorePreferencesCore)
+    implementation(libs.androidxDatastorePreferencesRxJava3)
+    implementation(libs.androidxDatastorePreferencesRxJava2)
+
+    // Kotlin Coroutines
+    implementation(libs.kotlinxCoroutinesAndroid)
+
+    // Kotlin Serialization
+    implementation(libs.kotlinxSerializationJson)
+
+// for view model
+    implementation(libs.lifecycleViewmodelKtx)
 }
