@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -46,9 +45,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    //implementation (libs.retrofit)
-    //implementation (libs.converter.gson)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.datastore)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.datastore.preferences.rxjava3)
+    implementation(libs.androidx.datastore.preferences.rxjava2)
+    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.retrofit)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.converter.gson)
 }

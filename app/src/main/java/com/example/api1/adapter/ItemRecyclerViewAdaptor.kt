@@ -1,4 +1,4 @@
-package com.example.api1.adapter
+package com.example.try11_1.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +24,10 @@ class ItemRecyclerViewAdapter(
                 activity.onItemClick(item.airport)
             }
         }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(airport: Airports)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
