@@ -14,7 +14,7 @@ class AirportRepository {
     private var airportData: List<Airports>? = null
 
     fun getAirports(onResult: (List<Airports>?) -> Unit, onError: (Throwable) -> Unit) {
-        val call = apiService.getStudents()
+        val call = apiService.getAirports()
 
         call.enqueue(object : Callback<List<Airports>> {
             override fun onResponse(call: Call<List<Airports>>, response: Response<List<Airports>>) {
