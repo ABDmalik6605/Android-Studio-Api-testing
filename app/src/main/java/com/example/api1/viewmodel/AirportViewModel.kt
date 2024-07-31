@@ -33,7 +33,6 @@ class AirportViewModel(application: Application) : AndroidViewModel(application)
                     val airportsList = mutableListOf<Airports>()
                     var fetchError: Throwable? = null
 
-                    
                     airportRepository.getAirports(
                         onResult = { airports ->
                             Log.d("AirportViewModel", "OnResult callback triggered")
