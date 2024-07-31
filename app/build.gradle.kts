@@ -36,18 +36,19 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.tracing.perfetto.handshake)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     // DataStore
     implementation(libs.androidxDatastore)
@@ -56,11 +57,14 @@ dependencies {
     implementation(libs.androidxDatastorePreferencesRxJava2)
 
     // Kotlin Coroutines
-    implementation(libs.kotlinxCoroutinesAndroid)
+    implementation(libs.kotlinx.coroutines.android)
 
     // Kotlin Serialization
     implementation(libs.kotlinxSerializationJson)
 
-// for view model
+    // ViewModel
     implementation(libs.lifecycleViewmodelKtx)
+
+    // Retrofit2 Kotlin Coroutines Adapter
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
 }

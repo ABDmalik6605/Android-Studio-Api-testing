@@ -1,12 +1,13 @@
 package com.example.api1.viewmodel
 
+import AirportRepository
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.api1.data.model.Airports
-import com.example.api1.repository.AirportRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,16 +26,22 @@ class AirportViewModel(application: Application) : AndroidViewModel(application)
     private fun fetchAirports() {
         viewModelScope.launch {
             try {
-                // Fetch airports using the repository
+                Log.d("AirportViewModel", "Starting to fetch airports")
+
                 val result = withContext(Dispatchers.IO) {
+                    Log.d("AirportViewModel", "Inside withContext block")
                     val airportsList = mutableListOf<Airports>()
                     var fetchError: Throwable? = null
 
                     airportRepository.getAirports(
                         onResult = { airports ->
+                            Log.d("AirportViewModel", "OnResult callback triggered")
+                            Log.d("AirportViewModel", "Airports fetched: $airports")
                             airportsList.addAll(airports ?: emptyList())
                         },
+
                         onError = { error ->
+                            Log.e("AirportViewModel", "Error callback triggered: ${error.message}")
                             fetchError = error
                         }
                     )
@@ -44,10 +51,13 @@ class AirportViewModel(application: Application) : AndroidViewModel(application)
                     }
                     airportsList
                 }
+                Log.d("AirportViewModelResult", "Fetched airports: $result")
                 _airports.postValue(result)
             } catch (e: Exception) {
-                _error.postValue(e.localizedMessage)
+                Log.e("AirportViewModel", "Exception in fetchAirports: ${e.message}")
+                _error.postValue(e.message)
             }
         }
     }
+
 }

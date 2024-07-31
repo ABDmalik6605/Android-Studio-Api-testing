@@ -1,42 +1,45 @@
 [versions]
 agp = "8.5.1"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+appcompatVersion = "1.7.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-appcompat = "1.7.0"
+coreKtxVersion = "1.13.1"
 material = "1.12.0"
 activity = "1.9.1"
 constraintlayout = "2.1.4"
+kotlin = "1.9.0"
+kotlinxCoroutinesAndroid = "1.7.3"
+kotlinxCoroutinesCore = "1.7.3"
 retrofit = "2.9.0"
+retrofit2KotlinCoroutinesAdapter = "0.9.2"
 tracingPerfettoHandshake = "1.0.0"
 lifecycleViewmodelKtx = "2.8.4"
 androidxDatastore = "1.1.1"
-kotlinxCoroutines = "1.6.4"
 kotlinxSerializationJson = "1.2.2"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-androidx-tracing-perfetto-handshake = { group = "androidx.tracing", name = "tracing-perfetto-handshake", version.ref = "tracingPerfettoHandshake" }
-lifecycleViewmodelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
-androidxDatastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDatastore" }
-androidxDatastorePreferencesCore = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "androidxDatastore" }
-androidxDatastorePreferencesRxJava3 = { group = "androidx.datastore", name = "datastore-preferences-rxjava3", version.ref = "androidxDatastore" }
-androidxDatastorePreferencesRxJava2 = { group = "androidx.datastore", name = "datastore-preferences-rxjava2", version.ref = "androidxDatastore" }
-kotlinxCoroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
-kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+androidx-tracing-perfetto-handshake = { module = "androidx.tracing:tracing-perfetto-handshake", version.ref = "tracingPerfettoHandshake" }
+lifecycleViewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidxDatastore = { module = "androidx.datastore:datastore", version.ref = "androidxDatastore" }
+androidxDatastorePreferencesCore = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDatastore" }
+androidxDatastorePreferencesRxJava3 = { module = "androidx.datastore:datastore-preferences-rxjava3", version.ref = "androidxDatastore" }
+androidxDatastorePreferencesRxJava2 = { module = "androidx.datastore:datastore-preferences-rxjava2", version.ref = "androidxDatastore" }
+kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+retrofit2-kotlin-coroutines-adapter = { module = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter", version.ref = "retrofit2KotlinCoroutinesAdapter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

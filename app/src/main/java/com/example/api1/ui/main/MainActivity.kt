@@ -20,10 +20,10 @@ import com.example.api1.data.model.ItemModel
 import com.example.api1.viewmodel.AirportViewModel
 
 class MainActivity : AppCompatActivity() {
+    private val airportViewModel: AirportViewModel by viewModels()
     private val itemList = ArrayList<ItemModel>()
     private lateinit var itemRecyclerViewAdapter: ItemRecyclerViewAdapter
     private lateinit var itemRecyclerView: RecyclerView
-    private val airportViewModel: AirportViewModel by viewModels()
     private lateinit var endTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeAirports() {
-        airportViewModel.airports.observe(this, Observer { airports ->
+        airportViewModel.airports.observe(this) { airports ->
             Log.d("MainActivity", "Observing airports: $airports") // Log to check data
             airports?.let {
                 itemList.clear()
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 itemRecyclerViewAdapter.notifyDataSetChanged()
             }
-        })
+        }
 
         airportViewModel.error.observe(this, Observer { error ->
             Log.e("MainActivity", "Error: $error") // Log errors

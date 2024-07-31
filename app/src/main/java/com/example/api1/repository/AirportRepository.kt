@@ -1,5 +1,3 @@
-package com.example.api1.repository
-
 import android.content.Context
 import android.util.Log
 import com.example.api1.data.model.Airports
@@ -16,67 +14,75 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class AirportRepository(private val context: Context) {
-
     private val apiService: ApiService = AirportApiClient.instance
-    private val airportsKey = DataStoreManager.getStringKey("airports")
+    private val studentsKey = DataStoreManager.getStringKey("students")
     private val gson = Gson()
-
 
     fun getAirports(onResult: (List<Airports>?) -> Unit, onError: (Throwable) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             // First, try to fetch data locally
             val localData = fetchLocally()
-            if (localData != null) {
+            if (localData != null && localData.isNotEmpty()) {
+                Log.d("AirportRepository", "Fetched locally: $localData")
                 onResult(localData)
             } else {
                 // If no local data, fetch from API
-                fetchAirportsFromApi(onResult, onError)
+                fetchStudentsFromApi(onResult, onError)
             }
         }
     }
+
     private fun fetchLocally(): List<Airports>? {
-        val savedStudentsJson = DataStoreManager.getData(context, airportsKey)
+        val savedStudentsJson = DataStoreManager.getData(context, studentsKey)
+        Log.d("AirportRepository", "Local JSON: $savedStudentsJson")
         return if (!savedStudentsJson.isNullOrEmpty()) {
-            deserializeAirports(savedStudentsJson)
+            deserializeStudents(savedStudentsJson)
         } else {
             null
         }
     }
 
-    private fun fetchAirportsFromApi(onResult: (List<Airports>?) -> Unit, onError: (Throwable) -> Unit) {
+    private fun fetchStudentsFromApi(onResult: (List<Airports>?) -> Unit, onError: (Throwable) -> Unit) {
         val call = apiService.getAirports()
 
         call.enqueue(object : Callback<List<Airports>> {
             override fun onResponse(call: Call<List<Airports>>, response: Response<List<Airports>>) {
                 if (response.isSuccessful) {
-                    val airports = response.body()
-                    Log.d("AirportRepository", "API Response: $airports")
-                    // Proceed with saving and processing
+                    val students = response.body()
+                    Log.d("AirportRepository", "Fetched from API: $students")
+                    // Save the fetched student data in DataStore
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val studentsJson = serializeStudents(students)
+                        Log.d("AirportRepository", "Saving to local storage: $studentsJson")
+                        DataStoreManager.saveData(context, studentsKey, studentsJson)
+                    }
+                    onResult(students)
                 } else {
-                    Log.e("AirportRepository", "API Error: ${response.errorBody()?.string()}")
                     onError(Throwable(response.errorBody()?.string()))
                 }
             }
 
-
             override fun onFailure(call: Call<List<Airports>>, t: Throwable) {
-                Log.e("AirportRepository", "API call failed: ${t.message}")
                 onError(t)
             }
         })
     }
 
-
-    private fun serializeAirports(airports: List<Airports>?): String {
+    private fun serializeStudents(students: List<Airports>?): String {
         // Serialize the list of students to JSON
-        return gson.toJson(airports)
+        return gson.toJson(students)
     }
 
-    private fun deserializeAirports(data: String): List<Airports> {
-        // Deserialize the JSON string to a list of students
-        return gson.fromJson(data, object : TypeToken<List<Airports>>() {}.type)
+    fun deserializeStudents(jsonString: String): List<Airports> {
+        val airportListType = object : TypeToken<List<Airports>>() {}.type
+        return try {
+            val airports: List<Airports> = gson.fromJson(jsonString, airportListType)
+            Log.d("AirportRepository", "Deserialized JSON: $airports")
+            airports
+        } catch (e: Exception) {
+            Log.e("AirportRepository", "Failed to parse JSON: ${e.message}")
+            emptyList()
+        }
     }
-//    fun getLocationByName(name: String): Location? {
-//        return airportData?.find { it.name == name }?.location
-//    }
+
 }
