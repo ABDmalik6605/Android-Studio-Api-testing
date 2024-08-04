@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var itemRecyclerViewAdapter: ItemRecyclerViewAdapter
     private lateinit var itemRecyclerView: RecyclerView
     private lateinit var endTextView: TextView
+    private lateinit var loadingScreen: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,30 +37,35 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         initUI()
+        showLoadingScreen()
         observeAirports()
     }
 
     private fun observeAirports() {
         airportViewModel.airports.observe(this) { airports ->
-            Log.d("MainActivity", "Observing airports: $airports") // Log to check data
+            Log.d("MainActivity", "Observing airports: $airports")
             airports?.let {
                 itemList.clear()
                 it.forEach { airport ->
-                    Log.d("MainActivity", "Adding airport: ${airport.name}") // Log each item
+                    Log.d("MainActivity", "Adding airport: ${airport.name}")
                     itemList.add(ItemModel(airport.name, airport))
                 }
                 itemRecyclerViewAdapter.notifyDataSetChanged()
+                hideLoadingScreen()
             }
         }
 
         airportViewModel.error.observe(this, Observer { error ->
-            Log.e("MainActivity", "Error: $error") // Log errors
+            Log.e("MainActivity", "Error: $error")
+            hideLoadingScreen()
         })
     }
 
     private fun initUI() {
         endTextView = findViewById(R.id.end)
         itemRecyclerView = findViewById(R.id.recyclerView)
+        loadingScreen = findViewById(R.id.loading_screen)
+
         itemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -69,6 +75,14 @@ class MainActivity : AppCompatActivity() {
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerViewAdapter = ItemRecyclerViewAdapter(itemList, this)
         itemRecyclerView.adapter = itemRecyclerViewAdapter
+    }
+
+    private fun showLoadingScreen() {
+        loadingScreen.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadingScreen() {
+        loadingScreen.visibility = View.GONE
     }
 
     fun onItemClick(airport: Airports) {

@@ -1,6 +1,5 @@
 package com.example.api1.viewmodel
 
-import AirportRepository
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -8,9 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.api1.data.model.Airports
+import com.example.api1.repository.AirportRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class AirportViewModel(application: Application) : AndroidViewModel(application) {
     private val airportRepository = AirportRepository(application)
@@ -29,27 +32,19 @@ class AirportViewModel(application: Application) : AndroidViewModel(application)
                 Log.d("AirportViewModel", "Starting to fetch airports")
 
                 val result = withContext(Dispatchers.IO) {
-                    Log.d("AirportViewModel", "Inside withContext block")
-                    val airportsList = mutableListOf<Airports>()
-                    var fetchError: Throwable? = null
-
-                    airportRepository.getAirports(
-                        onResult = { airports ->
-                            Log.d("AirportViewModel", "OnResult callback triggered")
-                            Log.d("AirportViewModel", "Airports fetched: $airports")
-                            airportsList.addAll(airports ?: emptyList())
-                        },
-
-                        onError = { error ->
-                            Log.e("AirportViewModel", "Error callback triggered: ${error.message}")
-                            fetchError = error
-                        }
-                    )
-
-                    if (fetchError != null) {
-                        throw fetchError!!
+                    suspendCancellableCoroutine<List<Airports>> { continuation ->
+                        airportRepository.getAirports(
+                            onResult = { airports ->
+                                Log.d("AirportViewModel", "OnResult callback triggered")
+                                Log.d("AirportViewModel", "Airports fetched: $airports")
+                                continuation.resume(airports ?: emptyList())
+                            },
+                            onError = { error ->
+                                Log.e("AirportViewModel", "Error callback triggered: ${error.message}")
+                                continuation.resumeWithException(error)
+                            }
+                        )
                     }
-                    airportsList
                 }
                 Log.d("AirportViewModelResult", "Fetched airports: $result")
                 _airports.postValue(result)
@@ -59,5 +54,4 @@ class AirportViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
-
 }
