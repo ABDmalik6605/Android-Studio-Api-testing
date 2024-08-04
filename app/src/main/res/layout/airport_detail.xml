@@ -190,20 +190,74 @@
         android:textColor="@color/red"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:text="Contact:"
+        android:textSize="16dp"
+        android:text="Contact Information:"
         app:layout_constraintTop_toBottomOf="@id/itemServices"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
     <TextView
-        android:id="@+id/itemContact"
+        android:id="@+id/itemPhoneLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        android:text="Phone:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/contactLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/itemPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/yellow"
-        android:text="Contact"
-        app:layout_constraintTop_toBottomOf="@id/itemServices"
-        app:layout_constraintStart_toEndOf="@id/contactLabel"
+        android:text="Phone"
+        app:layout_constraintTop_toBottomOf="@id/contactLabel"
+        app:layout_constraintStart_toEndOf="@id/itemPhoneLabel"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/itemEmailLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        android:text="Email:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/itemPhoneLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/itemEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/yellow"
+        android:text="Email"
+        app:layout_constraintTop_toBottomOf="@id/itemPhoneLabel"
+        app:layout_constraintStart_toEndOf="@id/itemEmailLabel"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/itemWebsiteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        android:text="Website:"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/itemEmailLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/itemWebsite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/yellow"
+        android:text="Website"
+        app:layout_constraintTop_toBottomOf="@id/itemEmailLabel"
+        app:layout_constraintStart_toEndOf="@id/itemWebsiteLabel"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"/>
 

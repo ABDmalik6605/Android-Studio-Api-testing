@@ -1,6 +1,7 @@
 package com.example.api1.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.api1.R
@@ -22,7 +23,9 @@ class AirportDetail : AppCompatActivity() {
         val textViewTimezone: TextView = findViewById(R.id.itemTimezone)
         val textViewAirlines: TextView = findViewById(R.id.itemAirlines)
         val textViewServices: TextView = findViewById(R.id.itemServices)
-        val textViewContact: TextView = findViewById(R.id.itemContact)
+        val textViewPhone: TextView = findViewById(R.id.itemPhone)
+        val textViewEmail: TextView = findViewById(R.id.itemEmail)
+        val textViewWebsite: TextView = findViewById(R.id.itemWebsite)
 
         airport?.let {
             textViewName.text = it.name
@@ -33,9 +36,17 @@ class AirportDetail : AppCompatActivity() {
             textViewTimezone.text = it.timezone
             textViewAirlines.text = it.airlines.joinToString()
             textViewServices.text = it.services.joinToString()
-            textViewContact.text = it.contactInfo?.let { contact ->
-                "Phone: ${contact.phone}, Email: ${contact.email}, Website: ${contact.website}"
-            } ?: "Contact information not available"
+
+            if (it.contact_info != null) {
+                textViewPhone.text = it.contact_info.phone
+                textViewEmail.text = it.contact_info.email
+                textViewWebsite.text = it.contact_info.website
+            } else {
+                textViewPhone.text = "N/A"
+                textViewEmail.text = "N/A"
+                textViewWebsite.text = "N/A"
+                Log.e("AirportDetail", "ContactInfo is null")
+            }
         } ?: run {
             textViewName.text = "No data available"
             textViewLocation.text = "Location not found"

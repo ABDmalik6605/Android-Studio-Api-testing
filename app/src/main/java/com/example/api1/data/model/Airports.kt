@@ -12,7 +12,7 @@ data class Airports(
     val timezone: String,
     val airlines: List<String>,
     val services: List<String>,
-    val contactInfo: ContactInfo
+    val contact_info: contact_info
 ) : Serializable
 
 data class Location(
@@ -20,7 +20,7 @@ data class Location(
     val longitude: Double
 ) : Serializable
 
-data class ContactInfo(
+data class contact_info(
     val phone: String,
     val email: String,
     val website: String

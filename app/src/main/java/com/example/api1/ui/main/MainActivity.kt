@@ -2,6 +2,8 @@ package com.example.api1.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var itemRecyclerView: RecyclerView
     private val airportRepository = AirportRepository()
     private lateinit var endTextView: TextView
+    private lateinit var loadingScreen: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +40,15 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         initUI()
+        showLoadingScreen() // Show loading screen when starting to fetch data
         fetchAirportsFromPreferences()
     }
 
     private fun initUI() {
         endTextView = findViewById(R.id.end)
         itemRecyclerView = findViewById(R.id.recyclerView)
+        loadingScreen = findViewById(R.id.loading_screen)
+
         itemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -54,35 +60,49 @@ class MainActivity : AppCompatActivity() {
         itemRecyclerView.adapter = itemRecyclerViewAdapter
     }
 
+    private fun showLoadingScreen() {
+        loadingScreen.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadingScreen() {
+        loadingScreen.visibility = View.GONE
+    }
+
     private fun fetchAirportsFromPreferences() {
         val savedAirportsJson = PreferenceManager.get("airports", "")
         if (!savedAirportsJson.isNullOrEmpty()) {
             val airports: List<Airports> = deserializeAirports(savedAirportsJson)
+            itemList.clear()
             airports.forEach { airport ->
                 itemList.add(ItemModel(airport.name, airport))
             }
             itemRecyclerViewAdapter.notifyDataSetChanged()
+            hideLoadingScreen()
         } else {
             fetchAirports()
         }
     }
 
     private fun fetchAirports() {
-        airportRepository.getAirports(
-            onResult = { airports ->
-                airports?.let {
-                    itemList.clear()
-                    it.forEach { airport ->
-                        itemList.add(ItemModel(airport.name, airport))
+        Handler(Looper.getMainLooper()).postDelayed({
+            airportRepository.getAirports(
+                onResult = { airports ->
+                    airports?.let {
+                        itemList.clear()
+                        it.forEach { airport ->
+                            itemList.add(ItemModel(airport.name, airport))
+                        }
+                        itemRecyclerViewAdapter.notifyDataSetChanged()
+                        saveAirportsToPreferences(airports)
+                        hideLoadingScreen()
                     }
-                    itemRecyclerViewAdapter.notifyDataSetChanged()
-                    saveAirportsToPreferences(airports)
+                },
+                onError = { error ->
+                    Log.e("MainActivity", "Error: ${error.message}")
+                    hideLoadingScreen()
                 }
-            },
-            onError = { error ->
-                Log.e("MainActivity", "Error: ${error.message}")
-            }
-        )
+            )
+        }, 2000)
     }
 
     private fun saveAirportsToPreferences(airports: List<Airports>) {

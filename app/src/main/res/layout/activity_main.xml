@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".ui.main.MainActivity">
+    <LinearLayout
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/Title"
         android:layout_width="match_parent"
