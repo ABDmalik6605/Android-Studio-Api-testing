@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
                 airports?.let {
                     itemList.clear()
                     it.forEach { airport ->
+                        Log.d("MainActivity", "Fetched airport: $airport")
                         itemList.add(ItemModel(airport.name, airport))
                     }
                     itemRecyclerViewAdapter.notifyDataSetChanged()
